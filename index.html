@@ -48,40 +48,19 @@
 </head>
 <body>
     <div class="form-container">
-        <h2>Submit Your Data</h2>
+        <h2>Ithraa alkhair form</h2>
         <form id="dataForm">
             <!-- Name Field -->
             <div class="form-group">
-                <label for="name">Full Name:</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required>
+                <label for="name">First and second name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
             </div>
 
-            <!-- Dropdown List for Department -->
-            <div class="form-group">
-                <label for="department">Department:</label>
-                <select class="form-control" id="department" name="department" required>
-                    <option value="" disabled selected>Select your department</option>
-                    <option value="Sales">Sales</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Engineering">Engineering</option>
-                    <option value="HR">HR</option>
-                </select>
-            </div>
-
-            <!-- Country Dropdown (Populated from Google Sheet) -->
-            <div class="form-group">
-                <label for="country">Country:</label>
-                <select class="form-control" id="country" name="country" required>
-                    <option value="" disabled selected>Loading countries...</option>
-                </select>
-            </div>
-
-              <!-- City Dropdown (Dependent on Country) -->
-              <div class="form-group">
-                <label for="city">City:</label>
-                <select class="form-control" id="city" name="city" required>
-                    <option value="" disabled selected>Select a country first</option>
-                </select>
+             <!-- Phone Number with Country Code -->
+             <div class="form-group">
+                <label for="phone">What's app Number:</label>
+                <input type="tel" class="form-control" id="phone" name="phone" required>
+                <div class="invalid-feedback" id="phoneError">Please enter a valid phone number.</div>
             </div>
 
             <!-- Email Field -->
@@ -90,20 +69,71 @@
                 <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
             </div>
 
-            <!-- Phone Number with Country Code -->
-            <div class="form-group">
-                <label for="phone">Phone Number:</label>
-                <input type="tel" class="form-control" id="phone" name="phone" required>
-                <div class="invalid-feedback" id="phoneError">Please enter a valid phone number.</div>
+             <!-- Nationality Dropdown (Populated from Google Sheet) -->
+             <div class="form-group">
+                <label for="country">Nationality</label>
+                <select class="form-control" id="Nationality" name="Nationality" required>
+                    <option value="" disabled selected></option>
+                </select>
             </div>
 
-            <!-- Yes/No Question -->
+            <!-- Country Dropdown (Populated from Google Sheet) -->
             <div class="form-group">
-                <label for="newsletter">Subscribe to Newsletter:</label>
-                <select class="form-control" id="newsletter" name="newsletter" required>
+                <label for="country">Country of risidence :</label>
+                <select class="form-control" id="country" name="country" required>
+                    <option value="" disabled selected></option>
+                </select>
+            </div>
+
+              <!-- City Dropdown (Dependent on Country) -->
+              <div class="form-group">
+                <label for="city">City of risidence :</label>
+                <select class="form-control" id="city" name="city" required>
+                    <option value="" disabled selected></option>
+                </select>
+            </div>
+
+            <!-- City Dropdown (Dependent on Country) -->
+            <div class="form-group">
+                <label for="city">Nearest airport</label>
+                <select class="form-control" id="airport" name="airport" required>
+                    <option value="" disabled selected></option>
+                </select>
+            </div>
+
+             <!-- Yes/No Question -->
+             <div class="form-group">
+                <label for="newsletter">Do you prefer to be able to change your flight ?</label>
+                <select class="form-control" id="changeFlight" name="changeFlight" required>
                     <option value="" disabled selected>Choose an option</option>
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
+                </select>
+            </div>
+
+             <!-- Yes/No Question -->
+             <div class="form-group">
+                <label for="Madinahdate">which option do you prefer most ?</label>
+                <select class="form-control" id="Madinahdate" name="Madinahdate" required>
+                    <option value="" disabled selected>Choose an option</option>
+                    <option value="Yes">Madinah before hajj</option>
+                    <option value="No">Madinah After hajj</option>
+                </select>
+            </div>
+
+           
+
+            <!-- Department Dropdown -->
+            <div class="form-group">
+                <label for="packagetype">What is your favorite package type ?</label>
+                <select class="form-control" id="packagetype" name="packagetype" required>
+                    <option value="" disabled selected>Select your package</option>
+                    <option value="luxuary">luxuary</option>
+                    <option value="luxuary shifting">luxuary shifting</option>
+                    <option value="premium">premium</option>
+                    <option value="premium shifting">premium shifting</option>
+                    <option value="premium">standard</option>
+                    <option value="premium shifting">standard shifting</option>
                 </select>
             </div>
 
@@ -126,7 +156,7 @@
         const phoneInputField = document.querySelector("#phone");
         const phoneError = document.getElementById("phoneError");
         const phoneInput = window.intlTelInput(phoneInputField, {
-            preferredCountries: ["us", "gb", "in", "eg"],
+            preferredCountries: ["us", "uk", "sa", "eg"],
             separateDialCode: true, // Makes the country code visible and separated
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js", // To enable validation
         });
@@ -153,6 +183,27 @@
             }
         }
 
+        async function fetchNationalities() {
+    try {
+        const response = await fetch('https://sheetdb.io/api/v1/s9fz2u8f0f9p0'); // Adjust the URL if needed
+        const data = await response.json();
+
+        const nationalityDropdown = document.getElementById('Nationality'); // Use the correct ID
+        nationalityDropdown.innerHTML = ''; // Clear default options
+
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.Nationality; // Assuming the column name in your sheet is 'Nationality'
+            option.textContent = item.Nationality;
+            nationalityDropdown.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error fetching nationality data:', error);
+    }
+}
+
+
+
        // Fetch city data based on selected country
        async function fetchCities(country) {
             try {
@@ -174,8 +225,51 @@
             }
         }
 
-        // Call fetchCountries when the page loads
-        window.onload = fetchCountries;
+        // Call fetchNationalities when the page loads
+
+
+// Fetch nearest airports based on selected city or country
+async function fetchAirports(city) {
+    try {
+        const response = await fetch('https://sheetdb.io/api/v1/s9fz2u8f0f9p0'); // Adjust the URL if needed
+        const data = await response.json();
+
+        const airportDropdown = document.getElementById('airport');
+        airportDropdown.innerHTML = ''; // Clear previous options
+
+        // Filter based on city
+        const filteredAirports = data.filter(item => item.City === city);
+
+        if (filteredAirports.length === 0) {
+            // Add a fallback option if no airports are available
+            const noAirportOption = document.createElement('option');
+            noAirportOption.value = "";
+            noAirportOption.textContent = "No airports available";
+            airportDropdown.appendChild(noAirportOption);
+        } else {
+            filteredAirports.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.Airport; // Assuming the column name in your sheet is 'Airport'
+                option.textContent = item.Airport;
+                airportDropdown.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching airport data:', error);
+    }
+}
+
+
+window.onload = function() {
+    fetchCountries();
+    fetchNationalities();
+};
+
+// Event listener for city dropdown to update nearest airports based on the selected city
+document.getElementById('city').addEventListener('change', (event) => {
+    const selectedCity = event.target.value;
+    fetchAirports(selectedCity);
+});
 
         // Event listener for country dropdown to update cities based on the selected country
         document.getElementById('country').addEventListener('change', (event) => {
@@ -189,12 +283,15 @@
             const formData = new FormData(form); 
             const name = formData.get('name');
             const email = formData.get('email');
-            const department = formData.get('department');
+            const packagetype = formData.get('packagetype');
             const country = formData.get('country'); // Get the selected country
+            const nationality = formData.get('Nationality'); // Get the selected country
             const city = formData.get('city'); // Get the selected city
             const phone = phoneInput.getNumber(); // Get the full international phone number
             const isValidPhone = phoneInput.isValidNumber(); // Validate the phone number
-            const newsletter = formData.get('newsletter');
+            const changeFlight = formData.get('changeFlight');
+            const Madinahdate = formData.get('Madinahdate');
+            const airport = formData.get('airport');
             
             // Validate phone number before submitting
             if (!isValidPhone) {
@@ -216,11 +313,14 @@
                         {
                             "Name": name,
                             "Email": email,
-                            "Department": department,
+                            "packagetype": packagetype,
                             "Country": country,
                             "City": city,
                             "Phone": phone,
-                            "Newsletter": newsletter
+                            "changeFlight": changeFlight,
+                            "Madinahdate": Madinahdate,
+                            "airport": airport,
+                            "Nationality" : nationality
                         }
                     ]
                 })
