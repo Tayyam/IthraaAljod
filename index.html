@@ -76,6 +76,14 @@
                 </select>
             </div>
 
+              <!-- City Dropdown (Dependent on Country) -->
+              <div class="form-group">
+                <label for="city">City:</label>
+                <select class="form-control" id="city" name="city" required>
+                    <option value="" disabled selected>Select a country first</option>
+                </select>
+            </div>
+
             <!-- Email Field -->
             <div class="form-group">
                 <label for="email">Email Address:</label>
@@ -145,8 +153,35 @@
             }
         }
 
-        // Call the fetchCountries function when the page loads
+       // Fetch city data based on selected country
+       async function fetchCities(country) {
+            try {
+                const response = await fetch('https://sheetdb.io/api/v1/s9fz2u8f0f9p0');
+                const data = await response.json();
+
+                const cityDropdown = document.getElementById('city');
+                cityDropdown.innerHTML = ''; // Clear the previous options
+                const filteredCities = data.filter(item => item.Country === country);
+
+                filteredCities.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.City; // Assuming the column name in your sheet is 'City'
+                    option.textContent = item.City;
+                    cityDropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching city data:', error);
+            }
+        }
+
+        // Call fetchCountries when the page loads
         window.onload = fetchCountries;
+
+        // Event listener for country dropdown to update cities based on the selected country
+        document.getElementById('country').addEventListener('change', (event) => {
+            const selectedCountry = event.target.value;
+            fetchCities(selectedCountry);
+        });
 
         form.addEventListener('submit', async (event) => {
             event.preventDefault(); // Prevents the form from refreshing the page
@@ -156,6 +191,7 @@
             const email = formData.get('email');
             const department = formData.get('department');
             const country = formData.get('country'); // Get the selected country
+            const city = formData.get('city'); // Get the selected city
             const phone = phoneInput.getNumber(); // Get the full international phone number
             const isValidPhone = phoneInput.isValidNumber(); // Validate the phone number
             const newsletter = formData.get('newsletter');
@@ -182,6 +218,7 @@
                             "Email": email,
                             "Department": department,
                             "Country": country,
+                            "City": city,
                             "Phone": phone,
                             "Newsletter": newsletter
                         }
