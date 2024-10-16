@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Collection Form</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- intl-tel-input CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css" />
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .iti {
+            width: 100%;
+        }
+        .invalid-feedback {
+            display: none;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Submit Your Data</h2>
+        <form id="dataForm">
+            <!-- Name Field -->
+            <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required>
+            </div>
+
+            <!-- Dropdown List for Department -->
+            <div class="form-group">
+                <label for="department">Department:</label>
+                <select class="form-control" id="department" name="department" required>
+                    <option value="" disabled selected>Select your department</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="HR">HR</option>
+                </select>
+            </div>
+
+            <!-- Country Dropdown (Populated from Google Sheet) -->
+            <div class="form-group">
+                <label for="country">Country:</label>
+                <select class="form-control" id="country" name="country" required>
+                    <option value="" disabled selected>Loading countries...</option>
+                </select>
+            </div>
+
+            <!-- Email Field -->
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <!-- Phone Number with Country Code -->
+            <div class="form-group">
+                <label for="phone">Phone Number:</label>
+                <input type="tel" class="form-control" id="phone" name="phone" required>
+                <div class="invalid-feedback" id="phoneError">Please enter a valid phone number.</div>
+            </div>
+
+            <!-- Yes/No Question -->
+            <div class="form-group">
+                <label for="newsletter">Subscribe to Newsletter:</label>
+                <select class="form-control" id="newsletter" name="newsletter" required>
+                    <option value="" disabled selected>Choose an option</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+        </form>
+
+        <p id="responseMessage" class="text-center mt-3"></p>
+    </div>
+
+    <!-- Bootstrap JS, jQuery, and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- intl-tel-input JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+    <script>
+        // Initialize the intl-tel-input plugin on the phone input
+        const phoneInputField = document.querySelector("#phone");
+        const phoneError = document.getElementById("phoneError");
+        const phoneInput = window.intlTelInput(phoneInputField, {
+            preferredCountries: ["us", "gb", "in", "eg"],
+            separateDialCode: true, // Makes the country code visible and separated
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js", // To enable validation
+        });
+
+        const form = document.getElementById('dataForm');
+
+        // Fetch country list from SheetDB and populate the dropdown
+        async function fetchCountries() {
+            try {
+                const response = await fetch('https://sheetdb.io/api/v1/s9fz2u8f0f9p0');
+                const data = await response.json();
+
+                const countryDropdown = document.getElementById('country');
+                countryDropdown.innerHTML = ''; // Clear default options
+
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.Country; // Assuming the column name in your sheet is 'Country'
+                    option.textContent = item.Country;
+                    countryDropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching country data:', error);
+            }
+        }
+
+        // Call the fetchCountries function when the page loads
+        window.onload = fetchCountries;
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevents the form from refreshing the page
+            
+            const formData = new FormData(form); 
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const department = formData.get('department');
+            const country = formData.get('country'); // Get the selected country
+            const phone = phoneInput.getNumber(); // Get the full international phone number
+            const isValidPhone = phoneInput.isValidNumber(); // Validate the phone number
+            const newsletter = formData.get('newsletter');
+            
+            // Validate phone number before submitting
+            if (!isValidPhone) {
+                phoneError.style.display = "block"; // Show validation error
+                return; // Stop the form from submitting
+            } else {
+                phoneError.style.display = "none"; // Hide validation error
+            }
+            
+            // Send the form data to SheetDB
+            const response = await fetch('https://sheetdb.io/api/v1/yprkco4u9gcxf', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    data: [
+                        {
+                            "Name": name,
+                            "Email": email,
+                            "Department": department,
+                            "Country": country,
+                            "Phone": phone,
+                            "Newsletter": newsletter
+                        }
+                    ]
+                })
+            });
+
+            if (response.ok) {
+                document.getElementById('responseMessage').textContent = "Data submitted successfully!";
+            } else {
+                document.getElementById('responseMessage').textContent = "There was an error submitting your data.";
+            }
+        });
+    </script>
+</body>
+</html>
