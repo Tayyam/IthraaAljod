@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Collection Form</title>
+    <title>Ithraa Aljod Form</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -20,6 +20,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            
         }
         .form-container {
             background-color: #fff;
@@ -28,13 +29,19 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 600px;
             width: 100%;
+            background-position: top top;
+            background-repeat: no-repeat;
+            background-size: 100%;
+            background-image: url('https://i.ibb.co/FYSG9Yc/image.png');
+            padding-top: 220px; /* Extra padding to make space for the logo */
+            
         }
         h2 {
             text-align: center;
             margin-bottom: 20px;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 25px;
         }
         .iti {
             width: 100%;
@@ -43,23 +50,30 @@
             display: none;
             color: red;
         }
-        .logo-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .logo-container img {
-            max-width: 150px;
-        }
+
+        
+
     </style>
 </head>
 <body>
+    
     <div class="form-container">
-        <!-- Logo Section -->
-        <div class="logo-container">
-            <img src="https://ithraaalkhair.com/public/sash_assets/images/brand/logo-and-name.png" alt="Logo">
-        </div>
-
         <h2>Data form</h2>
+
+    <!-- Language Selection Dropdown -->
+    <div class="form-group">
+        <label for="language">Language:</label>
+        <select class="form-control" id="language" name="language" onchange="changeLanguage()">
+            <option value="en" selected>English</option>
+            <option value="ar">عربي</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+        </select>
+    </div>
+
+
+
+     
         <form id="dataForm">
             <!-- Name Field -->
             <div class="form-group">
@@ -82,7 +96,7 @@
 
              <!-- Nationality Dropdown (Populated from Google Sheet) -->
              <div class="form-group">
-                <label for="country">Nationality</label>
+                <label for="Nationality">Nationality</label>
                 <select class="form-control" id="Nationality" name="Nationality" required>
                     <option value="" disabled selected></option>
                 </select>
@@ -106,7 +120,7 @@
 
             <!-- City Dropdown (Dependent on Country) -->
             <div class="form-group">
-                <label for="city">Nearest airport</label>
+                <label for="airport">Nearest airport</label>
                 <select class="form-control" id="airport" name="airport" required>
                     <option value="" disabled selected></option>
                 </select>
@@ -114,11 +128,22 @@
 
              <!-- Yes/No Question -->
              <div class="form-group">
-                <label for="newsletter">Do you prefer to be able to change your flight ?</label>
+                <label for="changeFlight">Do you prefer to promote your flight (with addtional cost)</label>
                 <select class="form-control" id="changeFlight" name="changeFlight" required>
                     <option value="" disabled selected>Choose an option</option>
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
+                </select>
+            </div>
+
+             <!-- Yes/No Question -->
+             <div class="form-group">
+                <label for="RoomType">what is your room type ?</label>
+                <select class="form-control" id="RoomType" name="RoomType" required>
+                    <option value="" disabled selected>Choose an option</option>
+                    <option value="Double">Double (with extra cost)</option>
+                    <option value="Triple">Triple (with extra cost)</option>
+                    <option value="Quadruple">Quadruple</option>
                 </select>
             </div>
 
@@ -143,10 +168,55 @@
                     <option value="luxuary shifting">luxuary shifting</option>
                     <option value="premium">premium</option>
                     <option value="premium shifting">premium shifting</option>
-                    <option value="premium">standard</option>
-                    <option value="premium shifting">standard shifting</option>
+                    <option value="standard">standard</option>
+                    <option value="standard shifting">standard shifting</option>
                 </select>
             </div>
+            
+
+              <div class="alert alert-primary" role="alert" id="luxuary-statment" name="luxuary-statment" style="display: none;">
+                Average stay of 15 days in 5-star hotels in Makkah and Madinah
+              </div>
+
+                <div class="alert alert-primary" role="alert" id="luxuary-shifting-statment" name="luxuary-shifting-statment" style="display: none;">
+                    Average stay of 15 days in 5-star hotels in Makkah and Madinah with shifting
+                </div>
+
+                <div class="alert alert-primary" role="alert" id="premium-statment" name="premium-statment" style="display: none;">
+                    Average stay of 15 days in 4-star hotels in Makkah and Madinah
+                </div>
+
+                <div class="alert alert-primary" role="alert" id="premium-shifting-statment" name="premium-shifting-statment" style="display: none;">
+                    Average stay of 15 days in 4-star hotels in Makkah and Madinah with shifting
+                </div>
+
+                <div class="alert alert-primary" role="alert" id="standard-statment" name="standard-statment" style="display: none;">
+                    Average stay of 15 days in 3-star hotels in Makkah and Madinah
+                </div>
+
+                <div class="alert alert-primary" role="alert" id="standard-shifting-statment" name="standard-shifting-statment" style="display: none;">
+                    Average stay of 15 days in 3-star hotels in Makkah and Madinah with shifting
+                </div>
+                
+            <!-- Camp Dropdown (Hidden by default) -->
+<div class="form-group" id="camp-group" style="display: none;">
+    <label for="camp">What is your preferred camp?</label>
+    <select class="form-control" id="camp" name="camp">
+        <option value="" disabled selected>Choose an option</option>
+        <option value="Camp A">Majar al kabash</option>
+        <option value="Camp B">Al mausuem</option>
+    </select>
+</div>
+
+          <!-- transport or near Dropdown (Hidden by default) -->
+          <div class="transport-or-nearHaram-group" id="transport-or-nearHaram-group" style="display: hidden;">
+            <label for="transport_or_nearHaram">Do you prefer to stay in Mecca in a hotel close to the Haram with quality and basic services, or a hotel a few meters away from the Haram with high quality and providing shuttle service for prayers?</label>
+            <select class="form-control" id="transport-or-nearHaram" name="transport-or-nearHaram">
+                <option value="" disabled selected>Choose an option</option>
+                <option value="transport">hotel providing shuttle service  with high quality and a few meters away from the Haram and</option>
+                <option value="near haram">close to the Haram with quality and basic services</option>
+            </select>
+        </div>
 
             <button type="submit" class="btn btn-primary btn-block">Submit</button>
         </form>
@@ -289,8 +359,8 @@ async function fetchCities(country) {
     }
 }
 
-// Fetch nearest airports based on selected city or country
-async function fetchAirports(city) {
+// Fetch all airports when the page loads
+async function fetchAirports() {
     try {
         const response = await fetch('https://sheetdb.io/api/v1/s9fz2u8f0f9p0'); // Adjust the URL if needed
         const data = await response.json();
@@ -298,39 +368,26 @@ async function fetchAirports(city) {
         const airportDropdown = document.getElementById('airport');
         airportDropdown.innerHTML = '<option value="" disabled selected>Select nearest airport</option>'; // Clear previous options
 
-        // Filter based on city
-        const filteredAirports = data.filter(item => item.City === city);
-
-        if (filteredAirports.length === 0) {
-            // Add a fallback option if no airports are available
-            const noAirportOption = document.createElement('option');
-            noAirportOption.value = "";
-            noAirportOption.textContent = "No airports available";
-            airportDropdown.appendChild(noAirportOption);
-        } else {
-            filteredAirports.forEach(item => {
-                const option = document.createElement('option');
-                option.value = item.airport; // Use lowercase 'airport' as per your data structure
-                option.textContent = item.airport;
-                airportDropdown.appendChild(option);
-            });
-        }
+        // Populate the airport dropdown with all airports in the data
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.airport; // Assuming the column name in your sheet is 'airport'
+            option.textContent = item.airport;
+            airportDropdown.appendChild(option);
+        });
     } catch (error) {
         console.error('Error fetching airport data:', error);
     }
 }
 
+
 // On page load, fetch country and nationality data
 window.onload = function() {
     fetchCountries();
     fetchNationalities();
+    fetchAirports(); // Fetch airports on page load
 };
 
-// Event listener for city dropdown to update nearest airports based on the selected city
-document.getElementById('city').addEventListener('change', (event) => {
-    const selectedCity = event.target.value;
-    fetchAirports(selectedCity);
-});
 
 // Event listener for country dropdown to update cities based on the selected country
 document.getElementById('country').addEventListener('change', (event) => {
@@ -354,6 +411,9 @@ document.getElementById('country').addEventListener('change', (event) => {
             const changeFlight = formData.get('changeFlight');
             const Madinahdate = formData.get('Madinahdate');
             const airport = formData.get('airport');
+            const RoomType = formData.get('RoomType');
+            const transportOrNearHaram = formData.get('transport-or-nearHaram');
+            const camp = formData.get('camp');
             
             // Validate phone number before submitting
             if (!isValidPhone) {
@@ -382,7 +442,10 @@ document.getElementById('country').addEventListener('change', (event) => {
                             "changeFlight": changeFlight,
                             "Madinahdate": Madinahdate,
                             "airport": airport,
-                            "Nationality" : nationality
+                            "Nationality" : nationality,
+                            "RoomType" : RoomType,
+                            "transportOrNearHaram" : transportOrNearHaram,
+                            "camp" : camp
                         }
                     ]
                 })
@@ -394,6 +457,172 @@ document.getElementById('country').addEventListener('change', (event) => {
                 document.getElementById('responseMessage').textContent = "There was an error submitting your data.";
             }
         });
+
+        // Define translations for each language
+const translations = {
+    en: {
+        name: "First and second name",
+        phone: "What's app Number",
+        email: "Email Address",
+        nationality: "Nationality",
+        country: "Country of residence",
+        city: "City of residence",
+        airport: "Nearest airport",
+        changeFlight: "Do you prefer to be able to change your flight?",
+        madinahOption: "Which option do you prefer most?",
+        packageType: "What is your favorite package type?",
+        RoomType: "what is your room type ?",
+        camp : "what is your favorite camp ?",
+        transport_or_nearHaram : "Do you prefer to stay in Mecca in a hotel close to the Haram with quality and basic services, or a hotel a few meters away from the Haram with high quality and providing shuttle service for prayers?",
+        submit: "Submit"
+
+    },
+    ar: {
+        name: "الاسم الأول والثاني",
+        phone: "رقم الواتس اب",
+        email: "عنوان البريد الإلكتروني",
+        nationality: "الجنسية",
+        country: "بلد الإقامة",
+        city: "مدينة الإقامة",
+        airport: "أقرب مطار",
+        changeFlight: "هل تفضل أن تكون قادرًا على تغيير رحلتك؟",
+        madinahOption: "ما الخيار الذي تفضله أكثر؟",
+        packageType: "ما نوع الباقة المفضل لديك؟",
+        RoomType: "ما هو نوع غرفتك؟",
+        camp : "ما هو نوع المخيم الذي تفضله؟",
+        transport_or_nearHaram : "هل تفضل البقاء في مكة في فندق قريب من الحرم بجودة وخدمات أساسية، أم فندق على بعد أمتار من الحرم بجودة عالية ويوفر خدمة النقل للصلوات؟",
+        submit: "إرسال"
+    },
+    fr: {
+        name: "Nom et prénom",
+        phone: "Numéro WhatsApp",
+        email: "Adresse e-mail",
+        nationality: "Nationalité",
+        country: "Pays de résidence",
+        city: "Ville de résidence",
+        airport: "Aéroport le plus proche",
+        changeFlight: "Préférez-vous pouvoir changer votre vol?",
+        madinahOption: "Quelle option préférez-vous le plus?",
+        packageType: "Quel est votre type de forfait préféré?",
+        RoomType: "Quel est votre type de chambre?",
+        camp : "Quel est votre type de camp préféré?",
+        transport_or_nearHaram : "Préférez-vous séjourner à La Mecque dans un hôtel proche du Haram avec des services de qualité et de base, ou un hôtel à quelques mètres du Haram avec une haute qualité et fournissant un service de navette pour les prières?",
+        submit: "Soumettre"
+    },
+    de: {
+        name: "Vor- und Nachname",
+        phone: "WhatsApp-Nummer",
+        email: "E-Mail-Adresse",
+        nationality: "Staatsangehörigkeit",
+        country: "Wohnsitzland",
+        city: "Wohnstadt",
+        airport: "Nächstgelegener Flughafen",
+        changeFlight: "Bevorzugen Sie es, Ihren Flug ändern zu können?",
+        madinahOption: "Welche Option bevorzugen Sie am meisten?",
+        packageType: "Was ist Ihr bevorzugter Pakettyp?",
+        RoomType: "Was ist Ihr Zimmertyp?",
+        camp : "Was ist Ihr bevorzugter Camp?",
+        transport_or_nearHaram : "Möchten Sie in Mekka in einem Hotel in der Nähe des Haram mit Qualität und grundlegenden Dienst leistungen übernachten oder in einem Hotel wenige Meter vom Haram entfernt mit hoher Qualität und Shuttle-Service für Gebete?",
+        submit: "Einreichen"
+    }
+};
+
+// Function to change the language
+function changeLanguage() {
+    const selectedLang = document.getElementById("language").value;
+    document.querySelector('label[for="name"]').textContent = translations[selectedLang].name;
+    document.querySelector('label[for="phone"]').textContent = translations[selectedLang].phone;
+    document.querySelector('label[for="email"]').textContent = translations[selectedLang].email;
+    document.querySelector('label[for="Nationality"]').textContent = translations[selectedLang].nationality;
+    document.querySelector('label[for="country"]').textContent = translations[selectedLang].country;
+    document.querySelector('label[for="city"]').textContent = translations[selectedLang].city;
+    document.querySelector('label[for="airport"]').textContent = translations[selectedLang].airport;
+    document.querySelector('label[for="changeFlight"]').textContent = translations[selectedLang].changeFlight;
+    document.querySelector('label[for="Madinahdate"]').textContent = translations[selectedLang].madinahOption;
+    document.querySelector('label[for="packagetype"]').textContent = translations[selectedLang].packageType;
+    document.querySelector('label[for="RoomType"]').textContent = translations[selectedLang].RoomType;
+    document.querySelector('label[for="camp"]').textContent = translations[selectedLang].camp;
+    document.querySelector('label[for="transport-or-nearHaram"]').textContent = translations[selectedLang].transport_or_nearHaram;
+    document.querySelector('button[type="submit"]').textContent = translations[selectedLang].submit;
+
+}
+
+// Function to show or hide the camp dropdown based on package selection
+document.getElementById('packagetype').addEventListener('change', function() {
+    var selectedPackage = this.value;
+    var campGroup = document.getElementById('camp-group');
+    
+    if (selectedPackage === 'luxuary' || selectedPackage === 'luxuary shifting') {
+        campGroup.style.display = 'block'; // Show the camp dropdown
+    } else {
+        campGroup.style.display = 'none'; // Hide the camp dropdown
+        document.getElementById('camp').value = ''; // Reset the camp dropdown value
+    }
+});
+
+// Function to show or hide the transport or near dropdown based on package selection
+document.getElementById('packagetype').addEventListener('change', function() {
+    var selectedPackage = this.value;
+    var transportOrNearGroup = document.getElementById('transport-or-nearHaram-group');
+    
+    if (selectedPackage === 'standard' || selectedPackage === 'standard shifting') {
+        transportOrNearGroup.style.display = 'block'; // Show the transport or near dropdown
+    } else {
+        transportOrNearGroup.style.display = 'none'; // Hide the transport or near dropdown
+        document.getElementById('transport-or-nearHaram').value = ''; // Reset the transport or near dropdown value
+    }
+});
+
+// Function to show or hide the the statment based on package selection
+document.getElementById('packagetype').addEventListener('change', function() {
+    var selectedPackage = this.value;
+    var luxuaryStatment = document.getElementById('luxuary-statment');
+    var luxuaryShiftingStatment = document.getElementById('luxuary-shifting-statment');
+    var premiumStatment = document.getElementById('premium-statment');
+    var premiumShiftingStatment = document.getElementById('premium-shifting-statment');
+    var standardStatment = document.getElementById('standard-statment');
+    var standardShiftingStatment = document.getElementById('standard-shifting-statment');
+
+    if (selectedPackage === 'luxuary') {
+        luxuaryStatment.style.display = 'block'; // Show the statment
+    } else {
+        luxuaryStatment.style.display = 'none'; // Hide the statment
+    }
+
+    if (selectedPackage === 'luxuary shifting') {
+        luxuaryShiftingStatment.style.display = 'block'; // Show the statment
+    } else {
+        luxuaryShiftingStatment.style.display = 'none'; // Hide the statment
+    }
+
+    if (selectedPackage === 'premium') {
+        premiumStatment.style.display = 'block'; // Show the statment
+    } else {
+        premiumStatment.style.display = 'none'; // Hide the statment
+    }
+
+    if (selectedPackage === 'premium shifting') {
+        premiumShiftingStatment.style.display = 'block'; // Show the statment
+    } else {
+        premiumShiftingStatment.style.display = 'none'; // Hide the statment
+    }
+
+    if (selectedPackage === 'standard') {
+        standardStatment.style.display = 'block'; // Show the statment
+    } else {
+        standardStatment.style.display = 'none'; // Hide the statment
+    }
+
+    if (selectedPackage === 'standard shifting') {
+        standardShiftingStatment.style.display = 'block'; // Show the statment
+    } else {
+        standardShiftingStatment.style.display = 'none'; // Hide the statment
+    }
+
+});
+
+
+
     </script>
 </body>
 </html>
