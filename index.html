@@ -174,28 +174,28 @@
             </div>
             
 
-              <div class="alert alert-primary" role="alert" id="luxuary-statment" name="luxuary-statment" style="display: none;">
+              <div class="alert alert-primary" role="alert" id="luxuaryStatment" name="luxuaryStatment" style="display: none;">
                 Average stay of 15 days in 5-star hotels in Makkah and Madinah
               </div>
 
-                <div class="alert alert-primary" role="alert" id="luxuary-shifting-statment" name="luxuary-shifting-statment" style="display: none;">
-                    Average stay of 15 days in 5-star hotels in Makkah and Madinah with shifting
+                <div class="alert alert-primary" role="alert" id="luxuaryShiftingStatment" name="luxuaryShiftingStatment" style="display: none;">
+                    Stay in a hotel near the Jamarat during the main Hajj period and then transfer to a luxury hotel near the Haram after Hajj and includes a stay in Madinah with an average of 18 days
                 </div>
 
-                <div class="alert alert-primary" role="alert" id="premium-statment" name="premium-statment" style="display: none;">
-                    Average stay of 15 days in 4-star hotels in Makkah and Madinah
+                <div class="alert alert-primary" role="alert" id="premiumStatment" name="premiumStatment" style="display: none;">
+                    Stay in 4-star hotels in Madinah and Makkah with an average stay of 18 days
                 </div>
 
-                <div class="alert alert-primary" role="alert" id="premium-shifting-statment" name="premium-shifting-statment" style="display: none;">
-                    Average stay of 15 days in 4-star hotels in Makkah and Madinah with shifting
+                <div class="alert alert-primary" role="alert" id="premiumShiftingStatment" name="premiumShiftingStatment" style="display: none;">
+                    Stay in 4-star hotels in Madinah and Makkah with an average stay of 18 days with shifting
                 </div>
 
-                <div class="alert alert-primary" role="alert" id="standard-statment" name="standard-statment" style="display: none;">
-                    Average stay of 15 days in 3-star hotels in Makkah and Madinah
+                <div class="alert alert-primary" role="alert" id="standardStatment" name="standardStatment" style="display: none;">
+                    Stay in hotels in Makkah and Madinah that provide basic services and an average stay of 20 days
                 </div>
 
-                <div class="alert alert-primary" role="alert" id="standard-shifting-statment" name="standard-shifting-statment" style="display: none;">
-                    Average stay of 15 days in 3-star hotels in Makkah and Madinah with shifting
+                <div class="alert alert-primary" role="alert" id="standardShiftingStatment" name="standardShiftingStatment" style="display: none;">
+                    Stay in hotels in Makkah and Madinah that provide basic services and an average stay of 20 days with shifting
                 </div>
                 
             <!-- Camp Dropdown (Hidden by default) -->
@@ -203,21 +203,21 @@
     <label for="camp">What is your preferred camp?</label>
     <select class="form-control" id="camp" name="camp">
         <option value="" disabled selected>Choose an option</option>
-        <option value="Camp A">Majar al kabash</option>
-        <option value="Camp B">Al mausuem</option>
+        <option value="Majar al kabash">Majar al kabash</option>
+        <option value="Al mausuem">Al mausuem</option>
     </select>
 </div>
 
           <!-- transport or near Dropdown (Hidden by default) -->
-          <div class="transport-or-nearHaram-group" id="transport-or-nearHaram-group" style="display: hidden;">
+          <div class="transport-or-nearHaram-group" id="transport-or-nearHaram-group" style="display: none;">
             <label for="transport_or_nearHaram">Do you prefer to stay in Mecca in a hotel close to the Haram with quality and basic services, or a hotel a few meters away from the Haram with high quality and providing shuttle service for prayers?</label>
             <select class="form-control" id="transport-or-nearHaram" name="transport-or-nearHaram">
                 <option value="" disabled selected>Choose an option</option>
-                <option value="transport">hotel providing shuttle service  with high quality and a few meters away from the Haram and</option>
+                <option value="transport">hotel providing shuttle service</option>
                 <option value="near haram">close to the Haram with quality and basic services</option>
             </select>
         </div>
-
+            <br>
             <button type="submit" class="btn btn-primary btn-block">Submit</button>
         </form>
 
@@ -474,6 +474,12 @@ const translations = {
         RoomType: "what is your room type ?",
         camp : "what is your favorite camp ?",
         transport_or_nearHaram : "Do you prefer to stay in Mecca in a hotel close to the Haram with quality and basic services, or a hotel a few meters away from the Haram with high quality and providing shuttle service for prayers?",
+        luxuaryStatment: "Average stay of 15 days in 5-star hotels in Makkah and Madinah",
+        luxuaryShiftingStatment: "Stay in a hotel near the Jamarat during the main Hajj period and then transfer to a luxury hotel near the Haram after Hajj and includes a stay in Madinah with an average of 18 days",
+        premiumStatment: "Stay in 4-star hotels in Madinah and Makkah with an average stay of 18 days",
+        premiumShiftingStatment: "Stay in 4-star hotels in Madinah and Makkah with an average stay of 18 days with shifting",
+        standardStatment: "Stay in hotels in Makkah and Madinah that provide basic services and an average stay of 20 days",
+        standardShiftingStatment: "Stay in hotels in Makkah and Madinah that provide basic services and an average stay of 20 days with shifting",
         submit: "Submit"
 
     },
@@ -491,6 +497,12 @@ const translations = {
         RoomType: "ما هو نوع غرفتك؟",
         camp : "ما هو نوع المخيم الذي تفضله؟",
         transport_or_nearHaram : "هل تفضل البقاء في مكة في فندق قريب من الحرم بجودة وخدمات أساسية، أم فندق على بعد أمتار من الحرم بجودة عالية ويوفر خدمة النقل للصلوات؟",
+        luxuaryStatment: "الإقامة المتوسطة لمدة 15 يومًا في فنادق 5 نجوم في مكة والمدينة",
+        luxuaryShiftingStatment: "الإقامة في فندق قريب من الجمرات خلال فترة الحج الرئيسية ثم الانتقال إلى فندق فاخر بالقرب من الحرم بعد الحج ويشمل الإقامة في المدينة بمتوسط 18 يومًا",
+        premiumStatment: "الإقامة في فنادق 4 نجوم في المدينة ومكة بمتوسط إقامة 18 يومًا",
+        premiumShiftingStatment: "الإقامة في فنادق 4 نجوم في المدينة ومكة بمتوسط إقامة 18 يومًا مع التحول",
+        standardStatment: "الإقامة في فنادق في مكة والمدينة تقدم خدمات أساسية ومتوسط الإقامة 20 يومًا",
+        standardShiftingStatment: "الإقامة في فنادق في مك والمدينة تقدم خدمات أساسية ومتوسط الإقامة 20 يومًا مع التحول",
         submit: "إرسال"
     },
     fr: {
@@ -507,6 +519,12 @@ const translations = {
         RoomType: "Quel est votre type de chambre?",
         camp : "Quel est votre type de camp préféré?",
         transport_or_nearHaram : "Préférez-vous séjourner à La Mecque dans un hôtel proche du Haram avec des services de qualité et de base, ou un hôtel à quelques mètres du Haram avec une haute qualité et fournissant un service de navette pour les prières?",
+        luxuaryStatment: "Séjour moyen de 15 jours dans des hôtels 5 étoiles à La Mecque et à Médine",
+        luxuaryShiftingStatment: "Séjour dans un hôtel proche des Jamarat pendant la période principale du Hajj puis transfert dans un hôtel de luxe proche du Haram après le Hajj et comprend un séjour à Médine avec une moyenne de 18 jours",
+        premiumStatment: "Séjour dans des hôtels 4 étoiles à Médine et à La Mecque avec une moyenne de 18 jours",
+        premiumShiftingStatment: "Séjour dans des hôtels 4 étoiles à Médine et à La Mecque avec une moyenne de 18 jours avec changement",
+        standardStatment: "Séjour dans des hôtels à La Mecque et à Médine qui fournissent des services de base et une moyenne de 20 jours",
+        standardShiftingStatment: "Séjour dans des hôtels à La Mecque et à Médine qui fournissent des services de base et une moyenne de 20 jours avec changement",
         submit: "Soumettre"
     },
     de: {
@@ -523,6 +541,12 @@ const translations = {
         RoomType: "Was ist Ihr Zimmertyp?",
         camp : "Was ist Ihr bevorzugter Camp?",
         transport_or_nearHaram : "Möchten Sie in Mekka in einem Hotel in der Nähe des Haram mit Qualität und grundlegenden Dienst leistungen übernachten oder in einem Hotel wenige Meter vom Haram entfernt mit hoher Qualität und Shuttle-Service für Gebete?",
+        luxuaryStatment: "Durchschnittlicher Aufenthalt von 15 Tagen in 5-Sterne-Hotels in Mekka und Medina",
+        luxuaryShiftingStatment: "Aufenthalt in einem Hotel in der Nähe der Jamarat während der Haupt-Hajj-Periode und dann Transfer in ein Luxushotel in der Nähe des Haram nach dem Hajj und beinhaltet einen Aufenthalt in Medina mit durchschnittlich 18 Tagen",
+        premiumStatment: "Aufenthalt in 4-Sterne-Hotels in Medina und Mekka mit durchschnittlich 18 Tagen",
+        premiumShiftingStatment: "Aufenthalt in 4-Sterne-Hotels in Medina und Mekka mit durchschnittlich 18 Tagen mit Wechsel",
+        standardStatment: "Aufenthalt in Hotels in Mekka und Medina, die grundlegende Dienstleistungen bieten und durchschnittlich 20 Tage dauern",
+        standardShiftingStatment: "Aufenthalt in Hotels in Mekka und Medina, die grundlegende Dienstleistungen bieten und durchschnittlich 20 Tage dauern mit Wechsel",
         submit: "Einreichen"
     }
 };
@@ -542,8 +566,14 @@ function changeLanguage() {
     document.querySelector('label[for="packagetype"]').textContent = translations[selectedLang].packageType;
     document.querySelector('label[for="RoomType"]').textContent = translations[selectedLang].RoomType;
     document.querySelector('label[for="camp"]').textContent = translations[selectedLang].camp;
-    document.querySelector('label[for="transport-or-nearHaram"]').textContent = translations[selectedLang].transport_or_nearHaram;
+    document.querySelector('label[for="transport_or_nearHaram"]').textContent = translations[selectedLang].transport_or_nearHaram;
     document.querySelector('button[type="submit"]').textContent = translations[selectedLang].submit;
+    document.getElementById('luxuaryStatment').textContent = translations[selectedLang].luxuaryStatment;
+    document.getElementById('luxuaryShiftingStatment').textContent = translations[selectedLang].luxuaryShiftingStatment;
+    document.getElementById('premiumStatment').textContent = translations[selectedLang].premiumStatment;
+    document.getElementById('premiumShiftingStatment').textContent = translations[selectedLang].premiumShiftingStatment;
+    document.getElementById('standardStatment').textContent = translations[selectedLang].standardStatment;
+    document.getElementById('standardShiftingStatment').textContent = translations[selectedLang].standardShiftingStatment;
 
 }
 
@@ -576,12 +606,12 @@ document.getElementById('packagetype').addEventListener('change', function() {
 // Function to show or hide the the statment based on package selection
 document.getElementById('packagetype').addEventListener('change', function() {
     var selectedPackage = this.value;
-    var luxuaryStatment = document.getElementById('luxuary-statment');
-    var luxuaryShiftingStatment = document.getElementById('luxuary-shifting-statment');
-    var premiumStatment = document.getElementById('premium-statment');
-    var premiumShiftingStatment = document.getElementById('premium-shifting-statment');
-    var standardStatment = document.getElementById('standard-statment');
-    var standardShiftingStatment = document.getElementById('standard-shifting-statment');
+    var luxuaryStatment = document.getElementById('luxuaryStatment');
+    var luxuaryShiftingStatment = document.getElementById('luxuaryShiftingStatment');
+    var premiumStatment = document.getElementById('premiumStatment');
+    var premiumShiftingStatment = document.getElementById('premiumShiftingStatment');
+    var standardStatment = document.getElementById('standardStatment');
+    var standardShiftingStatment = document.getElementById('standardShiftingStatment');
 
     if (selectedPackage === 'luxuary') {
         luxuaryStatment.style.display = 'block'; // Show the statment
