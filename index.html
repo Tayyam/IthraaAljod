@@ -402,7 +402,17 @@ document.getElementById('resetButton').addEventListener('click', function() {
     }
 });
 
-// Add this to your form submit listener
+async function getUserIP() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        console.error('Error fetching IP address:', error);
+        return null;
+    }
+}
+
 form.addEventListener('submit', async (event) => {
     event.preventDefault(); // Prevent the form from refreshing the page
 
@@ -410,7 +420,6 @@ form.addEventListener('submit', async (event) => {
         return; // Stop submission if the limit is reached
     }
 
-    // Existing code to handle form submission...
     const formData = new FormData(form);
     const name = formData.get('name');
     const email = formData.get('email');
@@ -435,7 +444,10 @@ form.addEventListener('submit', async (event) => {
         phoneError.style.display = "none"; // Hide validation error
     }
 
-    // Send the form data to SheetDB
+    // Fetch the user's IP address
+    const userIP = await getUserIP();
+
+    // Send the form data to SheetDB, including the user's IP address
     const response = await fetch('https://sheetdb.io/api/v1/yprkco4u9gcxf', {
         method: 'POST',
         headers: {
@@ -457,14 +469,15 @@ form.addEventListener('submit', async (event) => {
                     "Nationality": nationality,
                     "RoomType": RoomType,
                     "transportOrNearHaram": transportOrNearHaram,
-                    "camp": camp
+                    "camp": camp,
+                    "IP": userIP // Add user's IP here
                 }
             ]
         })
     });
 
     if (response.ok) {
-        $('#thankYouModal').modal('show'); // Show thank you modal on success
+        window.location.href = 'thank-you.html'; // Redirect to the "Thank You" page
     } else {
         document.getElementById('responseMessage').textContent = "There was an error submitting your data.";
     }
