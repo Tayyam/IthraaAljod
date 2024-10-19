@@ -267,16 +267,6 @@
 
         const form = document.getElementById('dataForm');
 
-// Function to load data from localStorage if available
-function loadDataFromLocalStorage(key) {
-    const storedData = localStorage.getItem(key);
-    return storedData ? JSON.parse(storedData) : null;
-}
-
-// Function to save data to localStorage
-function saveDataToLocalStorage(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
-}
 
 // Fetch all required data in a single request
 async function fetchData() {
@@ -292,15 +282,17 @@ async function fetchData() {
         const uniqueNationalities = Array.from(new Set(data.map(item => item.Nationality)));
         populateDropdown(uniqueNationalities, 'Nationality', 'Select your nationality');
 
-        // Populate airports
-        const uniqueAirports = Array.from(new Set(data.map(item => item.airport)));
-        populateDropdown(uniqueAirports, 'airport', 'Select nearest airport');
-
-        // Event listener for country dropdown to update cities based on the selected country
+        // Event listener for country dropdown to update cities and airports based on the selected country
         document.getElementById('country').addEventListener('change', function() {
             const selectedCountry = this.value;
+
+            // Filter cities based on the selected country
             const filteredCities = data.filter(item => item.Country === selectedCountry).map(item => item.City);
             populateDropdown(filteredCities, 'city', 'Select your city');
+
+            // Filter airports based on the selected country
+            const filteredAirports = data.filter(item => item.Country === selectedCountry).map(item => item.airport);
+            populateDropdown(filteredAirports, 'airport', 'Select nearest airport');
         });
 
     } catch (error) {
@@ -325,8 +317,6 @@ function populateDropdown(dataArray, dropdownId, placeholder) {
 window.onload = function() {
     fetchData(); // Fetch all data at once
 };
-
-
 
 
         form.addEventListener('submit', async (event) => {
