@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You!</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .hidden-message {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .show-message {
+            opacity: 1;
+        }
+
+        .hidden-content {
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        /* Optional: add a smooth slide-in effect for the appreciation message */
+        .slide-in {
+            transform: translateY(50px);
+            transition: transform 1s ease-in-out;
+        }
+
+        .show-slide {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center mt-5 hidden-content" id="mainContent">
+        <h1>Thank You for Submitting Your Information!</h1>
+        <p>Your form has been successfully submitted.</p>
+        <p>Would you like to submit another form?</p>
+        <a href="index.html" class="btn btn-danger">Submit Another Form</a>
+        <button class="btn btn-success ml-3" id="noThankYouButton">No Thank You</button>
+    </div>
+
+    <!-- Appreciation Message (Hidden initially) -->
+    <div class="alert alert-primary mt-4 hidden-message slide-in text-center" id="appreciationMessage">
+        We appreciate your effort. Thank you for your time!
+    </div>
+
+    <script>
+        // Event listener for the "No Thank You" button
+        document.getElementById('noThankYouButton').addEventListener('click', function() {
+            // Fade out the main content
+            const mainContent = document.getElementById('mainContent');
+            mainContent.classList.add('fade-out');
+
+            // After fading out the main content, hide it completely
+            setTimeout(() => {
+                mainContent.style.display = 'none';
+            }, 1000); // Match this duration to the CSS transition time
+
+            // Fade in the appreciation message with a slide-in effect
+            const appreciationMessage = document.getElementById('appreciationMessage');
+            appreciationMessage.classList.add('show-message', 'show-slide');
+        });
+    </script>
+</body>
+</html>
