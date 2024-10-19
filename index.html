@@ -299,35 +299,36 @@
         const form = document.getElementById('dataForm');
 
 
-// Fetch all required data in a single request
+        let dataFetched = false; // To check if data is already fetched
+let cachedData = []; // To store the fetched data
+
+// Fetch all required data in a single request when needed
 async function fetchData() {
-    try {
-        const response = await fetch('https://sheetdb.io/api/v1/s9fz2u8f0f9p0'); // Adjust to the correct endpoint if needed
-        const data = await response.json();
+    if (!dataFetched) {
+        try {
+            // Show loading state for dropdowns
+            setLoadingState('country', true);
+            setLoadingState('Nationality', true);
 
-        // Populate countries
-        const uniqueCountries = Array.from(new Set(data.map(item => item.Country))).sort();
-        populateDropdown(uniqueCountries, 'country', 'Select your country');
+            const response = await fetch('https://sheetdb.io/api/v1/s9fz2u8f0f9p0'); // Adjust to the correct endpoint if needed
+            cachedData = await response.json();
+            dataFetched = true; // Mark data as fetched
 
-        // Populate nationalities
-        const uniqueNationalities = Array.from(new Set(data.map(item => item.Nationality))).sort();
-        populateDropdown(uniqueNationalities, 'Nationality', 'Select your nationality');
+            // Populate countries
+            const uniqueCountries = Array.from(new Set(cachedData.map(item => item.Country))).sort();
+            populateDropdown(uniqueCountries, 'country', 'Select your country');
 
-        // Event listener for country dropdown to update cities and airports based on the selected country
-        document.getElementById('country').addEventListener('change', function() {
-            const selectedCountry = this.value;
+            // Populate nationalities
+            const uniqueNationalities = Array.from(new Set(cachedData.map(item => item.Nationality))).sort();
+            populateDropdown(uniqueNationalities, 'Nationality', 'Select your nationality');
 
-            // Filter cities based on the selected country
-            const filteredCities = data.filter(item => item.Country === selectedCountry).map(item => item.City).sort();
-            populateDropdown(filteredCities, 'city', 'Select your city');
-
-            // Filter airports based on the selected country
-            const filteredAirports = data.filter(item => item.Country === selectedCountry).map(item => item.airport).sort();
-            populateDropdown(filteredAirports, 'airport', 'Select nearest airport');
-        });
-
-    } catch (error) {
-        console.error('Error fetching data:', error);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            // Remove loading state after fetch is done
+            setLoadingState('country', false);
+            setLoadingState('Nationality', false);
+        }
     }
 }
 
@@ -344,10 +345,38 @@ function populateDropdown(dataArray, dropdownId, placeholder) {
     });
 }
 
-// On page load, fetch all data in a single request
-window.onload = function() {
-    fetchData(); // Fetch all data at once
-};
+// Function to set loading state on dropdowns
+function setLoadingState(dropdownId, isLoading) {
+    const dropdown = document.getElementById(dropdownId);
+    if (isLoading) {
+        dropdown.innerHTML = `<option value="" disabled selected>Loading...</option>`; // Display loading text
+        dropdown.disabled = true; // Disable dropdown
+    } else {
+        dropdown.disabled = false; // Enable dropdown when data is fetched
+    }
+}
+
+// Event listener for country dropdown
+document.getElementById('country').addEventListener('click', async function() {
+    await fetchData(); // Fetch data if necessary
+});
+
+document.getElementById('Nationality').addEventListener('click', async function() {
+    await fetchData(); // Fetch data if necessary
+});
+
+// Event listener for country dropdown to update cities and airports based on the selected country
+document.getElementById('country').addEventListener('change', function() {
+    const selectedCountry = this.value;
+
+    // Filter cities based on the selected country
+    const filteredCities = cachedData.filter(item => item.Country === selectedCountry).map(item => item.City).sort();
+    populateDropdown(filteredCities, 'city', 'Select your city');
+
+    // Filter airports based on the selected country
+    const filteredAirports = cachedData.filter(item => item.Country === selectedCountry).map(item => item.airport).sort();
+    populateDropdown(filteredAirports, 'airport', 'Select nearest airport');
+});
 
 
         // Maximum number of requests allowed
