@@ -305,11 +305,11 @@ async function fetchData() {
         const data = await response.json();
 
         // Populate countries
-        const uniqueCountries = Array.from(new Set(data.map(item => item.Country)));
+        const uniqueCountries = Array.from(new Set(data.map(item => item.Country))).sort();
         populateDropdown(uniqueCountries, 'country', 'Select your country');
 
         // Populate nationalities
-        const uniqueNationalities = Array.from(new Set(data.map(item => item.Nationality)));
+        const uniqueNationalities = Array.from(new Set(data.map(item => item.Nationality))).sort();
         populateDropdown(uniqueNationalities, 'Nationality', 'Select your nationality');
 
         // Event listener for country dropdown to update cities and airports based on the selected country
@@ -317,11 +317,11 @@ async function fetchData() {
             const selectedCountry = this.value;
 
             // Filter cities based on the selected country
-            const filteredCities = data.filter(item => item.Country === selectedCountry).map(item => item.City);
+            const filteredCities = data.filter(item => item.Country === selectedCountry).map(item => item.City).sort();
             populateDropdown(filteredCities, 'city', 'Select your city');
 
             // Filter airports based on the selected country
-            const filteredAirports = data.filter(item => item.Country === selectedCountry).map(item => item.airport);
+            const filteredAirports = data.filter(item => item.Country === selectedCountry).map(item => item.airport).sort();
             populateDropdown(filteredAirports, 'airport', 'Select nearest airport');
         });
 
