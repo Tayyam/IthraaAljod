@@ -247,6 +247,36 @@
         </div>
     </div>
 
+    <!-- Modal for limit exceeded message -->
+<div class="modal fade" id="limitExceededModal" tabindex="-1" role="dialog" aria-labelledby="limitExceededModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="limitExceededModalLabel">Submission Limit Reached</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          You have reached the maximum number of submissions for today. Please try again tomorrow, or enter the reset key to reset your limit.
+          <form id="resetLimitForm">
+            <div class="form-group">
+              <label for="resetKey">Enter Reset Key</label>
+              <input type="text" class="form-control" id="resetKey" placeholder="Enter reset key">
+            </div>
+            <small class="form-text text-muted"></small>
+          </form>
+          <div id="resetError" class="text-danger" style="display:none;">Incorrect key. Please try again.</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="resetButton">Reset Limit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
     <!-- Bootstrap JS, jQuery, and Popper.js -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
@@ -319,67 +349,127 @@ window.onload = function() {
 };
 
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevents the form from refreshing the page
-            
-            const formData = new FormData(form); 
-            const name = formData.get('name');
-            const email = formData.get('email');
-            const packagetype = formData.get('packagetype');
-            const country = formData.get('country'); // Get the selected country
-            const nationality = formData.get('Nationality'); // Get the selected country
-            const city = formData.get('city'); // Get the selected city
-            const phone = phoneInput.getNumber(); // Get the full international phone number
-            const isValidPhone = phoneInput.isValidNumber(); // Validate the phone number
-            const changeFlight = formData.get('changeFlight');
-            const Madinahdate = formData.get('Madinahdate');
-            const airport = formData.get('airport');
-            const RoomType = formData.get('RoomType');
-            const transportOrNearHaram = formData.get('transport-or-nearHaram');
-            const camp = formData.get('camp');
-            
-            // Validate phone number before submitting
-            if (!isValidPhone) {
-                phoneError.style.display = "block"; // Show validation error
-                return; // Stop the form from submitting
-            } else {
-                phoneError.style.display = "none"; // Hide validation error
-            }
-            
-            // Send the form data to SheetDB
-            const response = await fetch('https://sheetdb.io/api/v1/yprkco4u9gcxf', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    data: [
-                        {
-                            "Name": name,
-                            "Email": email,
-                            "packagetype": packagetype,
-                            "Country": country,
-                            "City": city,
-                            "Phone": phone,
-                            "changeFlight": changeFlight,
-                            "Madinahdate": Madinahdate,
-                            "airport": airport,
-                            "Nationality" : nationality,
-                            "RoomType" : RoomType,
-                            "transportOrNearHaram" : transportOrNearHaram,
-                            "camp" : camp
-                        }
-                    ]
-                })
-            });
+        // Maximum number of requests allowed
+const MAX_REQUESTS = 20;
+const RESET_TIME = 24 * 60 * 60 * 1000; // Reset after 24 hours
+const RESET_KEY = '1234'; // Key to reset the limit
 
-            if (response.ok) {
-                $('#thankYouModal').modal('show'); // Show thank you modal on success
-            } else {
-                document.getElementById('responseMessage').textContent = "There was an error submitting your data.";
-            }
-        });
+// Check request count and prevent spamming
+function checkRequestLimit() {
+    const requestData = JSON.parse(localStorage.getItem('requestData')) || { count: 0, lastSubmission: Date.now() };
+
+    const currentTime = Date.now();
+
+    // If it's been more than RESET_TIME since the last submission, reset the count
+    if (currentTime - requestData.lastSubmission > RESET_TIME) {
+        requestData.count = 0;
+        requestData.lastSubmission = currentTime;
+        localStorage.setItem('requestData', JSON.stringify(requestData));
+    }
+
+    // Check if user has reached the limit
+    if (requestData.count >= MAX_REQUESTS) {
+        $('#limitExceededModal').modal('show'); // Show the modal if the limit is reached
+        return false; // Prevent form submission
+    }
+
+    // If not at the limit, allow the form to be submitted and update the request data
+    requestData.count += 1;
+    requestData.lastSubmission = currentTime;
+    localStorage.setItem('requestData', JSON.stringify(requestData));
+
+    return true; // Allow form submission
+}
+
+// Handle reset logic
+document.getElementById('resetButton').addEventListener('click', function() {
+    const enteredKey = document.getElementById('resetKey').value;
+
+    if (enteredKey === RESET_KEY) {
+        // Reset the request count
+        const requestData = { count: 0, lastSubmission: Date.now() };
+        localStorage.setItem('requestData', JSON.stringify(requestData));
+
+        // Close the modal and clear the input
+        $('#limitExceededModal').modal('hide');
+        document.getElementById('resetKey').value = '';
+        document.getElementById('resetError').style.display = 'none';
+        
+        alert('Submission limit has been reset.');
+    } else {
+        // Show error if key is incorrect
+        document.getElementById('resetError').style.display = 'block';
+    }
+});
+
+// Add this to your form submit listener
+form.addEventListener('submit', async (event) => {
+    event.preventDefault(); // Prevent the form from refreshing the page
+
+    if (!checkRequestLimit()) {
+        return; // Stop submission if the limit is reached
+    }
+
+    // Existing code to handle form submission...
+    const formData = new FormData(form);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const packagetype = formData.get('packagetype');
+    const country = formData.get('country');
+    const nationality = formData.get('Nationality');
+    const city = formData.get('city');
+    const phone = phoneInput.getNumber();
+    const isValidPhone = phoneInput.isValidNumber();
+    const changeFlight = formData.get('changeFlight');
+    const Madinahdate = formData.get('Madinahdate');
+    const airport = formData.get('airport');
+    const RoomType = formData.get('RoomType');
+    const transportOrNearHaram = formData.get('transport-or-nearHaram');
+    const camp = formData.get('camp');
+
+    // Validate phone number before submitting
+    if (!isValidPhone) {
+        phoneError.style.display = "block"; // Show validation error
+        return; // Stop the form from submitting
+    } else {
+        phoneError.style.display = "none"; // Hide validation error
+    }
+
+    // Send the form data to SheetDB
+    const response = await fetch('https://sheetdb.io/api/v1/yprkco4u9gcxf', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            data: [
+                {
+                    "Name": name,
+                    "Email": email,
+                    "packagetype": packagetype,
+                    "Country": country,
+                    "City": city,
+                    "Phone": phone,
+                    "changeFlight": changeFlight,
+                    "Madinahdate": Madinahdate,
+                    "airport": airport,
+                    "Nationality": nationality,
+                    "RoomType": RoomType,
+                    "transportOrNearHaram": transportOrNearHaram,
+                    "camp": camp
+                }
+            ]
+        })
+    });
+
+    if (response.ok) {
+        $('#thankYouModal').modal('show'); // Show thank you modal on success
+    } else {
+        document.getElementById('responseMessage').textContent = "There was an error submitting your data.";
+    }
+});
+
 
         // Define translations for each language
 const translations = {
