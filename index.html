@@ -335,20 +335,43 @@ async function fetchData() {
     }
 }
 
-// Function to parse CSV data and clean up any unwanted quotes
+// Function to parse CSV data, handle commas inside quotes, and clean up unwanted quotes
 function parseCSV(csvText) {
     const rows = csvText.trim().split('\n');
-    const headers = rows[0].split(',');
+    const headers = rows[0].split(',').map(header => header.trim().replace(/^"|"$/g, ''));
     const data = rows.slice(1).map(row => {
-        const values = row.split(',').map(value => value.trim().replace(/^"|"$/g, '')); // Remove leading/trailing quotes
+        const values = splitCSVRow(row); // Use the helper function to correctly split row
         const obj = {};
         headers.forEach((header, index) => {
-            obj[header.trim()] = values[index]; // Assign values to the correct header
+            obj[header] = values[index].trim().replace(/^"|"$/g, ''); // Remove leading/trailing quotes
         });
         return obj;
     });
     return data;
 }
+
+// Helper function to correctly split a CSV row while handling commas inside quotes
+function splitCSVRow(row) {
+    const result = [];
+    let inQuotes = false;
+    let value = '';
+
+    for (let char of row) {
+        if (char === '"') {
+            inQuotes = !inQuotes; // Toggle the inQuotes flag when encountering a double quote
+        } else if (char === ',' && !inQuotes) {
+            // If we encounter a comma and we're not inside quotes, push the value to result
+            result.push(value);
+            value = ''; // Reset value for the next field
+        } else {
+            value += char; // Add the character to the current value
+        }
+    }
+    result.push(value); // Push the last value
+
+    return result;
+}
+
 
 // Function to populate dropdowns with options
 function populateDropdown(dataArray, dropdownId, placeholder) {
