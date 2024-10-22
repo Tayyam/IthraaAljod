@@ -108,8 +108,8 @@
 
              <!-- Nationality Dropdown (Populated from Google Sheet) -->
              <div class="form-group">
-                <label for="Nationality">Nationality (optional)</label>
-                <select class="form-control" id="Nationality" name="Nationality">
+                <label for="Nationality">Nationality </label>
+                <select class="form-control" id="Nationality" name="Nationality" required>
                     <option value="" disabled selected></option>
                 </select>
             </div>
@@ -285,6 +285,25 @@
     </div>
   </div>
   
+  <!-- Modal for Error Alert -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="errorModalLabel">Form Incomplete</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="errorMessage">
+          Please complete all required fields and correct the mistakes before submitting the form.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <!-- Bootstrap JS, jQuery, and Popper.js -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -498,10 +517,16 @@ async function getUserIP() {
 form.addEventListener('submit', async (event) => {
     event.preventDefault(); // Prevent the form from refreshing the page
 
+    // Check if request limit is reached
     if (!checkRequestLimit()) {
         return; // Stop submission if the limit is reached
     }
 
+    // Validation variables
+    let isValid = true;
+    let errorMessage = '';
+
+    // Get form data
     const formData = new FormData(form);
     const name = formData.get('name');
     const email = formData.get('email');
@@ -518,58 +543,85 @@ form.addEventListener('submit', async (event) => {
     const transportOrNearHaram = formData.get('transport-or-nearHaram');
     const camp = formData.get('camp');
 
-    // Validate phone number before submitting
+    // Validate phone number
     if (!isValidPhone) {
-        phoneError.style.display = "block"; // Show validation error
-        return; // Stop the form from submitting
+        phoneError.style.display = "block"; // Show phone validation error
+        isValid = false;
+        errorMessage += 'Please enter a valid phone number.<br>';
     } else {
-        phoneError.style.display = "none"; // Hide validation error
+        phoneError.style.display = "none"; // Hide phone validation error
     }
 
-    // Fetch the user's IP address
-    const userIP = await getUserIP();
-
-    // Fetch the fingerprint
-    const fp = await FingerprintJS.load();
-    const result = await fp.get();
-    const fingerprint = result.visitorId;
-
-    // Send the form data to SheetDB, including the user's IP address and fingerprint
-    const response = await fetch('https://sheetdb.io/api/v1/yprkco4u9gcxf', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            data: [
-                {
-                    "Name": name,
-                    "Email": email,
-                    "packagetype": packagetype,
-                    "Country": country,
-                    "City": city,
-                    "Phone": phone,
-                    "changeFlight": changeFlight,
-                    "Madinahdate": Madinahdate,
-                    "airport": airport,
-                    "Nationality": nationality,
-                    "RoomType": RoomType,
-                    "transportOrNearHaram": transportOrNearHaram,
-                    "camp": camp,
-                    "IP": userIP, // Add user's IP here
-                    "Fingerprint": fingerprint // Add the fingerprint here
-                }
-            ]
-        })
+    // Validate other required fields
+    const requiredFields = form.querySelectorAll('[required]');
+    requiredFields.forEach(field => {
+        if (!field.value) {
+            isValid = false;
+            field.classList.add('is-invalid'); // Highlight the incomplete field
+            errorMessage += `The field "${field.previousElementSibling.textContent}" is required.<br>`;
+        } else {
+            field.classList.remove('is-invalid'); // Remove highlight if valid
+        }
     });
 
-    if (response.ok) {
-        window.location.href = 'thank-you.html'; // Redirect to the "Thank You" page
-    } else {
-        document.getElementById('responseMessage').textContent = "There was an error submitting your data.";
+    // If form is invalid, show the error modal and vibrate
+    if (!isValid) {
+        navigator.vibrate(200); // Trigger device vibration
+        document.getElementById('errorMessage').innerHTML = errorMessage; // Set custom error message
+        $('#errorModal').modal('show'); // Show error modal
+        return; // Stop further execution
+    }
+
+    // If all fields are valid, proceed with form submission
+    try {
+        // Fetch user's IP address
+        const userIP = await getUserIP();
+
+        // Fetch the fingerprint
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        const fingerprint = result.visitorId;
+
+        // Send form data to SheetDB, including user's IP and fingerprint
+        const response = await fetch('https://sheetdb.io/api/v1/yprkco4u9gcxf', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                data: [
+                    {
+                        "Name": name,
+                        "Email": email,
+                        "packagetype": packagetype,
+                        "Country": country,
+                        "City": city,
+                        "Phone": phone,
+                        "changeFlight": changeFlight,
+                        "Madinahdate": Madinahdate,
+                        "airport": airport,
+                        "Nationality": nationality,
+                        "RoomType": RoomType,
+                        "transportOrNearHaram": transportOrNearHaram,
+                        "camp": camp,
+                        "IP": userIP,
+                        "Fingerprint": fingerprint
+                    }
+                ]
+            })
+        });
+
+        if (response.ok) {
+            window.location.href = 'thank-you.html'; // Redirect to "Thank You" page
+        } else {
+            document.getElementById('responseMessage').textContent = "There was an error submitting your data.";
+        }
+    } catch (error) {
+        document.getElementById('responseMessage').textContent = "There was an error processing your request.";
     }
 });
+
 
 
         // Define translations for each language
