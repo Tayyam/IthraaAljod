@@ -215,8 +215,8 @@
     <label for="camp">What is your preferred camp?</label>
     <select class="form-control" id="camp" name="camp">
         <option value="" disabled selected>Choose an option</option>
-        <option value="Majar al kabash" id="majarAlKabash">Majar al kabash</option>
-        <option value="Al mausuem" id="alMausuem">Al mausuem</option>
+        <option value="Majar al kabash" id="majarAlKabash">Majar al kabash (Close to the Jamarat stoning area)</option>
+        <option value="Al mausuem" id="alMausuem">Al mausuem (far from the Jamarat stoning area)</option>
     </select>
 </div>
 
@@ -597,8 +597,8 @@ const translations = {
         doubleOption: "Double (with extra cost)",
         TripleOption: "Triple (with extra cost)",
         Quadoption: "Quadruple",
-        majarAlKabash: "Majar al kabash",
-        alMausuem: "Al mausuem",
+        majarAlKabash: "Majar al kabash (Close to the Jamarat stoning area)",
+        alMausuem: "Al mausuem (far from the Jamarat stoning area)",
         transportOption: "hotel providing shuttle service",
         nearHaramOption: "close to the Haram with quality and basic services",
         luxuaryPackage: "luxuary",
@@ -639,8 +639,8 @@ const translations = {
         doubleOption: "ثنائي (بتكلفة إضافية)",
         TripleOption: "ثلاثي (بتكلفة إضافية)",
         Quadoption: "رباعي",
-        majarAlKabash: "مجر الكبش",
-        alMausuem: "المعيصم",
+        majarAlKabash: "مجر الكبش (قريب من منطقة رمي الجمرات)",
+        alMausuem: "المعيصم (بعيد عن منطقة رمي الجمرات)",
         transportOption: "فندق يوفر خدمة النقل",
         nearHaramOption: "قريب من الحرم بجودة وخدمات أساسية",
         luxuaryPackage: "فاخر",
@@ -680,8 +680,8 @@ const translations = {
         doubleOption: "Double (avec frais supplémentaires)",
         TripleOption: "Triple (avec frais supplémentaires)",
         Quadoption: "Quadruple",
-        majarAlKabash: "Majar al kabash",
-        alMausuem: "Al mausuem",
+        majarAlKabash: "Majar al kabash (Près de la zone de lapidation des J",
+        alMausuem: "Al mausuem (loin de la zone de lapidation des J",
         transportOption: "hôtel fournissant un service de navette",
         nearHaramOption: "près du Haram avec qualité et services de base",
         luxuaryPackage: "de luxe",
@@ -721,8 +721,8 @@ const translations = {
         doubleOption: "Doppelzimmer (mit zusätzlichen Kosten)",
         TripleOption: "Dreibettzimmer (mit zusätzlichen Kosten)",
         Quadoption: "Vierbettzimmer",
-        majarAlKabash: "Majar al kabash",
-        alMausuem: "Al mausuem",
+        majarAlKabash: "Majar al kabash (In der Nähe des Jamarat-Steinigungsbereichs)",
+        alMausuem: "Al mausuem (weit vom Jamarat-Steinigungsbereich entfernt)",
         transportOption: "Hotel mit Shuttle-Service",
         nearHaramOption: "in der Nähe des Haram mit Qualität und grundlegenden Dienstleistungen",
         luxuaryPackage: "Luxus",
@@ -795,9 +795,11 @@ document.getElementById('packagetype').addEventListener('change', function() {
     
     if (selectedPackage === 'luxuary' || selectedPackage === 'luxuary shifting') {
         campGroup.style.display = 'block'; // Show the camp dropdown
+        document.getElementById('camp').required = true;
     } else {
         campGroup.style.display = 'none'; // Hide the camp dropdown
         document.getElementById('camp').value = ''; // Reset the camp dropdown value
+        document.getElementById('camp').required = false;
     }
 });
 
@@ -808,8 +810,10 @@ document.getElementById('packagetype').addEventListener('change', function() {
     
     if (selectedPackage === 'standard' || selectedPackage === 'standard shifting') {
         transportOrNearGroup.style.display = 'block'; // Show the transport or near dropdown
+        document.getElementById('transport-or-nearHaram').required = true;
     } else {
         transportOrNearGroup.style.display = 'none'; // Hide the transport or near dropdown
+        document.getElementById('transport-or-nearHaram').required = false;
         document.getElementById('transport-or-nearHaram').value = ''; // Reset the transport or near dropdown value
     }
 });
