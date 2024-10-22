@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thank You!</title>
-     <!-- Favicon -->
-     <link rel="icon" href="https://i.ibb.co/WcLDqQJ/02.png" type="image/png">
+    <!-- Favicon -->
+    <link rel="icon" href="https://i.ibb.co/WcLDqQJ/02.png" type="image/png">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .hidden-message {
@@ -27,7 +27,6 @@
             transition: opacity 1s ease-in-out;
         }
 
-        /* Optional: add a smooth slide-in effect for the appreciation message */
         .slide-in {
             transform: translateY(50px);
             transition: transform 1s ease-in-out;
@@ -37,7 +36,6 @@
             transform: translateY(0);
         }
 
-        /* Ensure the logo remains visible */
         #logoContainer {
             opacity: 1;
             transition: opacity 1s ease-in-out;
@@ -62,7 +60,7 @@
         <button class="btn btn-success ml-3" id="noThankYouButton">No Thank You</button>
 
         <br>
-        
+
         <!-- Insert logo after buttons -->
         <div class="mt-4" id="logoContainer">
             <img id="logo" src="https://i.ibb.co/WcLDqQJ/02.png" alt="Logo" style="height: 30vh;">
@@ -73,6 +71,9 @@
     <div class="alert alert-primary mt-4 hidden-message slide-in text-center" id="appreciationMessage">
         We appreciate your effort. Thank you for your time!
     </div>
+
+    <!-- Confetti Script -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <script>
         // Event listener for the "No Thank You" button
@@ -100,6 +101,13 @@
             // Show appreciation message with a smooth slide-in effect
             const appreciationMessage = document.getElementById('appreciationMessage');
             appreciationMessage.classList.add('show-message', 'show-slide');
+
+            // Trigger confetti animation
+            confetti({
+                particleCount: 150,
+                spread: 60,
+                origin: { y: 0.6 }
+            });
         });
     </script>
 </body>
