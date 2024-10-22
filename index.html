@@ -28,6 +28,7 @@
             align-items: center;
             
         }
+        
         .form-container {
             background-color: #fff;
             padding: 20px;
@@ -64,8 +65,13 @@
 <body>
     
     <div class="form-container">
-        <h2 id="formTitle">Data form</h2>
-
+        <div class="alert alert-info" role="alert" id="formTitle" name="formTitle" style="text-align: center; font-weight: 500;">
+            Welcome to the Pilgrims' Data Survey Page! 🕋 <br>
+            Please fill out the required fields accurately to ensure your information is properly registered. This will greatly help us in customizing the most suitable packages and services for you to ensure a smooth pilgrimage experience. <br>
+            We appreciate your cooperation and attention to detail. ✅<br>
+            Thank you for your efforts, and we wish you a blessed pilgrimage! 😊
+        </div>
+        
     <!-- Language Selection Dropdown -->
     <div class="form-group">
         <label for="language">Language:</label>
@@ -288,8 +294,11 @@
     <!-- intl-tel-input JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 
+    <!-- Include Select2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
-        // Initialize the intl-tel-input plugin on the phone input
         const phoneInputField = document.querySelector("#phone");
         const phoneError = document.getElementById("phoneError");
         const phoneInput = window.intlTelInput(phoneInputField, {
@@ -300,120 +309,127 @@
 
         const form = document.getElementById('dataForm');
 
-
         let dataFetched = false; // To check if data is already fetched
-let cachedData = []; // To store the fetched data
+        let cachedData = []; // To store the fetched data
 
-// Fetch all required data from the static CSV file when the page loads
-async function fetchData() {
-    if (!dataFetched) {
-        try {
-            // Show loading state for dropdowns
-            setLoadingState('country', true);
-            setLoadingState('Nationality', true);
+        // Fetch all required data from the static CSV file when the page loads
+        async function fetchData() {
+            if (!dataFetched) {
+                try {
+                    // Show loading state for dropdowns
+                    setLoadingState('country', true);
+                    setLoadingState('Nationality', true);
 
-            const response = await fetch('database-static.csv'); // Fetch the CSV file
-            const csvText = await response.text(); // Get CSV text
-            cachedData = parseCSV(csvText); // Parse CSV text into a JavaScript array of objects
-            dataFetched = true; // Mark data as fetched
+                    const response = await fetch('database-static.csv'); // Fetch the CSV file
+                    const csvText = await response.text(); // Get CSV text
+                    cachedData = parseCSV(csvText); // Parse CSV text into a JavaScript array of objects
+                    dataFetched = true; // Mark data as fetched
 
-            // Populate countries
-            const uniqueCountries = Array.from(new Set(cachedData.map(item => item.Country))).sort();
-            populateDropdown(uniqueCountries, 'country', 'Select your country');
+                    // Populate countries
+                    const uniqueCountries = Array.from(new Set(cachedData.map(item => item.Country))).sort();
+                    populateDropdown(uniqueCountries, 'country', 'Select your country');
 
-            // Populate nationalities
-            const uniqueNationalities = Array.from(new Set(cachedData.map(item => item.Nationality))).sort();
-            populateDropdown(uniqueNationalities, 'Nationality', 'Select your nationality');
+                    // Populate nationalities
+                    const uniqueNationalities = Array.from(new Set(cachedData.map(item => item.Nationality))).sort();
+                    populateDropdown(uniqueNationalities, 'Nationality', 'Select your nationality');
 
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        } finally {
-            // Remove loading state after fetch is done
-            setLoadingState('country', false);
-            setLoadingState('Nationality', false);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                } finally {
+                    // Remove loading state after fetch is done
+                    setLoadingState('country', false);
+                    setLoadingState('Nationality', false);
+                }
+            }
         }
-    }
-}
 
-// Function to parse CSV data, handle commas inside quotes, and clean up unwanted quotes
-function parseCSV(csvText) {
-    const rows = csvText.trim().split('\n');
-    const headers = rows[0].split(',').map(header => header.trim().replace(/^"|"$/g, ''));
-    const data = rows.slice(1).map(row => {
-        const values = splitCSVRow(row); // Use the helper function to correctly split row
-        const obj = {};
-        headers.forEach((header, index) => {
-            obj[header] = values[index].trim().replace(/^"|"$/g, ''); // Remove leading/trailing quotes
+        // Function to parse CSV data, handle commas inside quotes, and clean up unwanted quotes
+        function parseCSV(csvText) {
+            const rows = csvText.trim().split('\n');
+            const headers = rows[0].split(',').map(header => header.trim().replace(/^"|"$/g, ''));
+            const data = rows.slice(1).map(row => {
+                const values = splitCSVRow(row); // Use the helper function to correctly split row
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = values[index].trim().replace(/^"|"$/g, ''); // Remove leading/trailing quotes
+                });
+                return obj;
+            });
+            return data;
+        }
+
+        // Helper function to correctly split a CSV row while handling commas inside quotes
+        function splitCSVRow(row) {
+            const result = [];
+            let inQuotes = false;
+            let value = '';
+
+            for (let char of row) {
+                if (char === '"') {
+                    inQuotes = !inQuotes; // Toggle the inQuotes flag when encountering a double quote
+                } else if (char === ',' && !inQuotes) {
+                    // If we encounter a comma and we're not inside quotes, push the value to result
+                    result.push(value);
+                    value = ''; // Reset value for the next field
+                } else {
+                    value += char; // Add the character to the current value
+                }
+            }
+            result.push(value); // Push the last value
+
+            return result;
+        }
+
+        // Function to populate dropdowns with options and initialize Select2
+        function populateDropdown(dataArray, dropdownId, placeholder) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.innerHTML = `<option value="" disabled selected>${placeholder}</option>`; // Add placeholder
+
+            dataArray.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                dropdown.appendChild(option);
+            });
+
+            // Initialize Select2 search functionality for all dropdowns
+            $(`#${dropdownId}`).select2({
+                placeholder: placeholder,
+                allowClear: true
+            });
+        }
+
+        // Function to set loading state on dropdowns
+        function setLoadingState(dropdownId, isLoading) {
+            const dropdown = document.getElementById(dropdownId);
+            if (isLoading) {
+                dropdown.innerHTML = `<option value="" disabled selected>Loading...</option>`; // Display loading text
+                dropdown.disabled = true; // Disable dropdown
+            } else {
+                dropdown.disabled = false; // Enable dropdown when data is fetched
+            }
+        }
+
+        // Event listener for country dropdown using Select2 change event
+        $('#country').on('change', function() {
+            const selectedCountry = $(this).val();
+
+            // Filter continent based on the selected country
+            const continent = cachedData.find(item => item.Country === selectedCountry).Continent;
+
+            // Filter cities based on the selected country
+            const filteredCities = cachedData.filter(item => item.Country === selectedCountry).map(item => item.City).sort();
+            populateDropdown(filteredCities, 'city', 'Select your city');
+
+            // Filter airports based on the selected continent
+            const filteredAirports = cachedData.filter(item => item.Continent === continent).map(item => item.airport).sort();
+            populateDropdown(filteredAirports, 'airport', 'Select nearest airport');
         });
-        return obj;
-    });
-    return data;
-}
 
-// Helper function to correctly split a CSV row while handling commas inside quotes
-function splitCSVRow(row) {
-    const result = [];
-    let inQuotes = false;
-    let value = '';
-
-    for (let char of row) {
-        if (char === '"') {
-            inQuotes = !inQuotes; // Toggle the inQuotes flag when encountering a double quote
-        } else if (char === ',' && !inQuotes) {
-            // If we encounter a comma and we're not inside quotes, push the value to result
-            result.push(value);
-            value = ''; // Reset value for the next field
-        } else {
-            value += char; // Add the character to the current value
-        }
-    }
-    result.push(value); // Push the last value
-
-    return result;
-}
-
-
-// Function to populate dropdowns with options
-function populateDropdown(dataArray, dropdownId, placeholder) {
-    const dropdown = document.getElementById(dropdownId);
-    dropdown.innerHTML = `<option value="" disabled selected>${placeholder}</option>`; // Add placeholder
-
-    dataArray.forEach(item => {
-        const option = document.createElement('option');
-        option.value = item;
-        option.textContent = item;
-        dropdown.appendChild(option);
-    });
-}
-
-// Function to set loading state on dropdowns
-function setLoadingState(dropdownId, isLoading) {
-    const dropdown = document.getElementById(dropdownId);
-    if (isLoading) {
-        dropdown.innerHTML = `<option value="" disabled selected>Loading...</option>`; // Display loading text
-        dropdown.disabled = true; // Disable dropdown
-    } else {
-        dropdown.disabled = false; // Enable dropdown when data is fetched
-    }
-}
-
-// Event listener for country dropdown to update cities and airports based on the selected country
-document.getElementById('country').addEventListener('change', function() {
-    const selectedCountry = this.value;
-
-    // Filter cities based on the selected country
-    const filteredCities = cachedData.filter(item => item.Country === selectedCountry).map(item => item.City).sort();
-    populateDropdown(filteredCities, 'city', 'Select your city');
-
-    // Filter airports based on the selected country
-    const filteredAirports = cachedData.filter(item => item.Country === selectedCountry).map(item => item.airport).sort();
-    populateDropdown(filteredAirports, 'airport', 'Select nearest airport');
-});
-
-// Automatically fetch data when the page loads
-window.addEventListener('load', async function() {
-    await fetchData(); // Fetch data immediately on page load
-});
+        // Automatically fetch data when the page loads
+        window.addEventListener('load', async function() {
+            await fetchData(); // Fetch data immediately on page load
+        });
 
         // Maximum number of requests allowed
 const MAX_REQUESTS = 20;
@@ -593,7 +609,7 @@ const translations = {
         standardShiftingPackage: "standard shifting",
         yes : "Yes",
         no : "No",
-        formTitle : "Data form",
+        formTitle: "Welcome to the Pilgrims' Data Survey Page! 🕋 <br>Please fill out the required fields accurately to ensure your information is properly registered. This will greatly help us in customizing the most suitable packages and services for you to ensure a smooth pilgrimage experience. <br>We appreciate your cooperation and attention to detail. ✅<br>Thank you for your efforts, and we wish you a blessed pilgrimage! 😊",
         madinahBefore : "Madinah before hajj",
         madinahAfter : "Madinah After hajj",
         thankYou : "Thank you for submitting your information. We appreciate your time and effort",
@@ -617,9 +633,9 @@ const translations = {
         luxuaryStatment: "الإقامة المتوسطة لمدة 15 يومًا في فنادق 5 نجوم في مكة والمدينة",
         luxuaryShiftingStatment: "الإقامة في فندق قريب من الجمرات خلال فترة الحج الرئيسية ثم الانتقال إلى فندق فاخر بالقرب من الحرم بعد الحج ويشمل الإقامة في المدينة بمتوسط 18 يومًا",
         premiumStatment: "الإقامة في فنادق 4 نجوم في المدينة ومكة بمتوسط إقامة 18 يومًا",
-        premiumShiftingStatment: "الإقامة في فنادق 4 نجوم في المدينة ومكة بمتوسط إقامة 18 يومًا مع التحول",
+        premiumShiftingStatment: "الإقامة في فنادق 4 نجوم في المدينة ومكة بمتوسط إقامة 18 يومًا مع الشيفتنج",
         standardStatment: "الإقامة في فنادق في مكة والمدينة تقدم خدمات أساسية ومتوسط الإقامة 20 يومًا",
-        standardShiftingStatment: "الإقامة في فنادق في مك والمدينة تقدم خدمات أساسية ومتوسط الإقامة 20 يومًا مع التحول",
+        standardShiftingStatment: "الإقامة في فنادق في مكة والمدينة تقدم خدمات أساسية ومتوسط الإقامة 20 يومًا مع الشيفتنج",
         doubleOption: "ثنائي (بتكلفة إضافية)",
         TripleOption: "ثلاثي (بتكلفة إضافية)",
         Quadoption: "رباعي",
@@ -631,11 +647,11 @@ const translations = {
         luxuaryShiftingPackage: "فاخر انتقالي",
         premiumPackage: "مميز",
         premiumShiftingPackage: "مميز انتقالي",
-        standardPackage: "قياسي",
-        standardShiftingPackage: "قياسي انتقالي",
+        standardPackage: "اقتصادي",
+        standardShiftingPackage: "اقتصادي انتقالي",
         yes : "نعم",
         no : "لا",
-        formTitle : "نموذج بيانات",
+        formTitle: "مرحبًا بكم في صفحة استبيان بيانات الحجاج! 🕋 <br>يرجى ملء الحقول المطلوبة بدقة لضمان تسجيل معلوماتك بشكل صحيح. سيساعدنا هذا كثيرًا في تخصيص أفضل الباقات والخدمات لضمان تجربة حج سلسة. <br>نقدر تعاونك واهتمامك بالتفاصيل. ✅<br>شكرًا لجهودك، ونتمنى لك حجًا مباركًا! 😊",
         madinahBefore : "المدينة قبل الحج",
         madinahAfter : "المدينة بعد الحج",
         thankYou : "شكرا لك على تقديم معلوماتك. نحن نقدر وقتك وجهدك",
@@ -676,7 +692,7 @@ const translations = {
         standardShiftingPackage: "standard en déplacement",
         yes : "Oui",
         no : "Non",
-        formTitle : "Formulaire de données",
+        formTitle: "Bienvenue sur la page de l'enquête de données des pèlerins ! 🕋 <br>Veuillez remplir les champs obligatoires avec précision afin de garantir que vos informations soient correctement enregistrées. Cela nous aidera grandement à personnaliser les forfaits et services les plus adaptés pour vous assurer une expérience de pèlerinage fluide. <br>Nous apprécions votre coopération et votre attention aux détails. ✅<br>Merci pour vos efforts, et nous vous souhaitons un pèlerinage béni ! 😊",
         madinahBefore : "Madinah avant le Hajj",
         madinahAfter : "Madinah après le Hajj",
         thankYou : "Merci d'avoir soumis vos informations. Nous apprécions votre temps et vos efforts",
@@ -717,7 +733,7 @@ const translations = {
         standardShiftingPackage: "Standardverschiebung",
         yes : "Ja",
         no : "Nein",
-        formTitle : "Datenformular",
+        formTitle: "Willkommen auf der Seite zur Datenerhebung für Pilger! 🕋 <br>Bitte füllen Sie die erforderlichen Felder sorgfältig aus, um sicherzustellen, dass Ihre Informationen korrekt registriert werden. Dies wird uns sehr dabei helfen, die passendsten Pakete und Dienstleistungen für Sie zu personalisieren und Ihnen eine reibungslose Pilgerreise zu gewährleisten. <br>Wir schätzen Ihre Kooperation und Aufmerksamkeit für Details. ✅<br>Vielen Dank für Ihre Bemühungen, und wir wünschen Ihnen eine gesegnete Pilgerreise! 😊",
         madinahBefore : "Madinah vor Hajj",
         madinahAfter : "Madinah nach Hajj",
         thankYou : "Vielen Dank für die Übermittlung Ihrer Informationen. Wir schätzen Ihre Zeit und Mühe",
@@ -763,7 +779,7 @@ function changeLanguage() {
     document.getElementById('standardShiftingPackage').textContent = translations[selectedLang].standardShiftingPackage;
     document.getElementById('yes').textContent = translations[selectedLang].yes;
     document.getElementById('no').textContent = translations[selectedLang].no;
-    document.getElementById('formTitle').textContent = translations[selectedLang].formTitle;
+    document.getElementById('formTitle').innerHTML = translations[selectedLang].formTitle;
     document.getElementById('madinahAfter').textContent = translations[selectedLang].madinahAfter;
     document.getElementById('madinahBefore').textContent = translations[selectedLang].madinahBefore;
     document.getElementById('thankYou').textContent = translations[selectedLang].thankYou;
