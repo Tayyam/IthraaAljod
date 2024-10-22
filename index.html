@@ -122,13 +122,6 @@
                 </select>
             </div>
 
-              <!-- City Dropdown (Dependent on Country) -->
-              <div class="form-group">
-                <label for="city">City of risidence :</label>
-                <select class="form-control" id="city" name="city" required>
-                    <option value="" disabled selected></option>
-                </select>
-            </div>
 
             <!-- Nearest airport  -->
             <div class="form-group">
@@ -463,9 +456,6 @@
             // Filter continent based on the selected country
             const continent = cachedData.find(item => item.Country === selectedCountry).Continent;
 
-            // Filter cities based on the selected country
-            const filteredCities = cachedData.filter(item => item.Country === selectedCountry).map(item => item.City).sort();
-            populateDropdown(filteredCities, 'city', 'Select your city');
 
             // Filter airports based on the selected continent
             const filteredAirports = cachedData.filter(item => item.Continent === continent).map(item => item.airport).sort();
@@ -493,7 +483,6 @@
             // If possible, set country and city dropdowns to user's location
             if (userLocation) {
                 const countryDropdown = document.getElementById('country');
-                const cityDropdown = document.getElementById('city');
 
                 // Try to set country
                 const countryOption = [...countryDropdown.options].find(option => option.textContent.trim().toLowerCase() === userLocation.country.toLowerCase());
@@ -501,14 +490,7 @@
                     countryOption.selected = true;
                     $('#country').trigger('change'); // Trigger change event to populate cities
 
-                    // After cities are populated, set the city
-                    setTimeout(() => {
-                        const cityOption = [...cityDropdown.options].find(option => option.textContent.trim().toLowerCase() === userLocation.city.toLowerCase());
-                        if (cityOption) {
-                            cityOption.selected = true;
-                            $('#city').trigger('change');
-                        }
-                    }, 1000); // Wait a bit for cities to populate
+                  
                 }
             }
 
@@ -791,7 +773,6 @@ const translations = {
         email: "Email Address",
         nationality: "Nationality",
         country: "Country of residence",
-        city: "City of residence",
         airport: "Nearest airport",
         changeFlight: "Do you prefer to be able to change your flight?",
         madinahOption: "Which option do you prefer most?",
@@ -833,7 +814,6 @@ const translations = {
         email: "عنوان البريد الإلكتروني",
         nationality: "الجنسية",
         country: "بلد الإقامة",
-        city: "مدينة الإقامة",
         airport: "أقرب مطار",
         changeFlight: "هل تفضل أن تكون قادرًا على تغيير رحلتك؟",
         madinahOption: "ما الخيار الذي تفضله أكثر؟",
@@ -874,7 +854,6 @@ const translations = {
         email: "Adresse e-mail",
         nationality: "Nationalité",
         country: "Pays de résidence",
-        city: "Ville de résidence",
         airport: "Aéroport le plus proche",
         changeFlight: "Préférez-vous pouvoir changer votre vol?",
         madinahOption: "Quelle option préférez-vous le plus?",
@@ -915,7 +894,6 @@ const translations = {
         email: "E-Mail-Adresse",
         nationality: "Staatsangehörigkeit",
         country: "Wohnsitzland",
-        city: "Wohnstadt",
         airport: "Nächstgelegener Flughafen",
         changeFlight: "Bevorzugen Sie es, Ihren Flug ändern zu können?",
         madinahOption: "Welche Option bevorzugen Sie am meisten?",
@@ -960,7 +938,6 @@ function changeLanguage() {
     document.querySelector('label[for="email"]').textContent = translations[selectedLang].email;
     document.querySelector('label[for="Nationality"]').textContent = translations[selectedLang].nationality;
     document.querySelector('label[for="country"]').textContent = translations[selectedLang].country;
-    document.querySelector('label[for="city"]').textContent = translations[selectedLang].city;
     document.querySelector('label[for="airport"]').textContent = translations[selectedLang].airport;
     document.querySelector('label[for="changeFlight"]').textContent = translations[selectedLang].changeFlight;
     document.querySelector('label[for="Madinahdate"]').textContent = translations[selectedLang].madinahOption;
