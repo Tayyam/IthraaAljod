@@ -503,7 +503,6 @@ document.getElementById('resetButton').addEventListener('click', function() {
     }
 });
 
-// Fetch user's IP address
 async function getUserIP() {
     try {
         const response = await fetch('https://api.ipify.org?format=json');
@@ -514,6 +513,7 @@ async function getUserIP() {
         return null;
     }
 }
+
 
 // Fetch the fingerprint
 async function getFingerprint() {
@@ -539,7 +539,6 @@ function getFormattedDate() {
     
     return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
-
 // Function to auto-submit visitor data on page load
 async function submitVisitorData() {
     try {
@@ -547,9 +546,22 @@ async function submitVisitorData() {
         const fingerprint = await getFingerprint();
         const submissionDate = getFormattedDate();
 
-        // Attempt to fetch country and city based on IP using a geolocation API
-        const geoResponse = await fetch(`https://ipapi.co/${userIP}/json/`);
-        const geoData = await geoResponse.json();
+        // Try fetching country and city based on IP using ipapi.co
+        let geoData;
+        try {
+            const geoResponse = await fetch(`https://ipapi.co/${userIP}/json/`);
+            if (geoResponse.status === 429) {
+                throw new Error('Rate limit exceeded for ipapi.co');
+            }
+            geoData = await geoResponse.json();
+        } catch (error) {
+            console.warn('ipapi.co failed, switching to ipgeolocation.io:', error);
+
+            // Fallback to ipgeolocation.io
+            const fallbackResponse = await fetch(`https://api.ipgeolocation.io/ipgeo?apiKey=05666d0a3ce747f8b2d93b5e84405672&ip=${userIP}`);
+            geoData = await fallbackResponse.json();
+        }
+
         const country = geoData.country_name || 'Unknown';
         const city = geoData.city || 'Unknown';
 
